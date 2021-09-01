@@ -76,6 +76,44 @@ exports.createPassword = (req, res) => {
     });
 };
 
+// Create and Save a User profile
+exports.createProfile = (req, res) => {
+  // Validate request
+  if (!req.body.password_token) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+    return;
+  }
+
+  // Create a User profile
+  const data = {
+    telegram_id: req.body.telegram_id,
+    twitter_id: req.body.twitter_id,
+    wallet_address: req.body.wallet_address
+  };
+  
+  User.update(data, {
+    where: { password_token: req.body.password_token }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "User profile was created successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot create User profile with password_token=${req.body.password_token}. Maybe User profile info was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error creating User profile with password_token=" + req.body.password_token
+      });
+    });
+};
+
 // Retrieve all Users from the database.
 exports.findAll = (req, res) => {
   const first_name = req.query.first_name;
