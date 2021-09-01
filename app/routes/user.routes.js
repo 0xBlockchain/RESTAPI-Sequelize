@@ -7,12 +7,10 @@ module.exports = app => {
   router.post("/", users.create);
   router.put("/createPassword", users.createPassword);
   router.put("/createProfile", users.createProfile);
+  router.put("/createInvestor", users.createInvestor);
 
   // Retrieve all Users
   router.get("/", users.findAll);
-
-  // Retrieve all published Users
-  router.get("/published", users.findAllPublished);
 
   // Retrieve a single User with id
   router.get("/:id", users.findOne);
