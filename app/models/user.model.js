@@ -36,6 +36,9 @@ module.exports = (sequelize, Sequelize) => {
     investor_telegram_id: {
       type: Sequelize.STRING
     },
+    investor_country: {
+      type: Sequelize.STRING
+    },
     investor_commitment_amount: {
       type: Sequelize.STRING
     },

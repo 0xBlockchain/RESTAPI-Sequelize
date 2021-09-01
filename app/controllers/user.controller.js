@@ -114,6 +114,49 @@ exports.createProfile = (req, res) => {
     });
 };
 
+// Create and Save a User profile
+exports.createInvestor = (req, res) => {
+  // Validate request
+  if (!req.body.password_token) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+    return;
+  }
+
+  // Create a Investor
+  const data = {
+    investor_name: req.body.investor_name,
+    investor_telegram_id: req.body.investor_telegram_id,
+    investor_country: req.body.investor_country,
+    investor_commitment_amount: req.body.investor_commitment_amount,
+    investor_wallet_address: req.body.investor_wallet_address,
+    investor_email: req.body.investor_email,
+    investor_fund_name: req.body.investor_fund_name,
+    investor_fund_website: req.body.investor_fund_website
+  };
+  
+  User.update(data, {
+    where: { password_token: req.body.password_token }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Investor was created successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot create Investor with password_token=${req.body.password_token}. Maybe Investor info was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error creating Investor with password_token=" + req.body.password_token
+      });
+    });
+};
+
 // Retrieve all Users from the database.
 exports.findAll = (req, res) => {
   const first_name = req.query.first_name;
