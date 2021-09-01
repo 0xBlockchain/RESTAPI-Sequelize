@@ -1,4 +1,6 @@
 const db = require("../models");
+const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 const User = db.users;
 const Op = db.Sequelize.Op;
 
@@ -12,12 +14,16 @@ exports.create = (req, res) => {
     return;
   }
 
+  const password_token = crypto.randomBytes(20).toString('hex');
+
   // Create a User
   const user = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
     user_name: req.body.user_name,
+    email_verified: false,
+    password_token: password_token,
   };
 
   // Save User in the database
@@ -29,6 +35,43 @@ exports.create = (req, res) => {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the User."
+      });
+    });
+};
+
+// Create and Save a new User password
+exports.createPassword = (req, res) => {
+  // Validate request
+  if (!req.body.password_token) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+    return;
+  }
+
+  // Create a User password
+  const data = {
+    password: req.body.password,
+    email_verified: true,
+  };
+  
+  User.update(data, {
+    where: { password_token: req.body.password_token }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "User password was created successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot create User password with password_token=${req.body.password_token}. Maybe User password was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error creating User password with password_token=" + req.body.password_token
       });
     });
 };
