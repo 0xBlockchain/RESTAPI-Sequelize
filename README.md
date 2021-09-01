@@ -1,4 +1,6 @@
-# Node.js Rest APIs with Express, Sequelize & MySQL
+# KYC USER API
+
+Built with Node.js Rest APIs with Express, Sequelize & MySQL
 
 ## Project setup
 ```
